@@ -25,7 +25,13 @@ module.exports =
       commandString = "cd '#{atom.project.path}' && #{commandString}"
       properties = { reversed: true, invalidate: 'never' }
 
-      for range in editor.getSelectedBufferRanges()
+      selectedRanges = editor.getSelectedBufferRanges()
+
+      if selectedRanges.every((range) -> range.start == range.end)
+        editor.selectAll()
+        selectedRanges = editor.getSelectedBufferRanges()
+
+      for range in selectedRanges
         marker = editor.markBufferRange range, properties
         processRange marker, editor, commandString
 
