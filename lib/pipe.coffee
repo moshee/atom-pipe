@@ -22,8 +22,8 @@ module.exports =
       if history.length > 300
         history.shift()
 
-      if atom.project.rootDirectory?
-        commandString = "cd '#{atom.project.rootDirectory.path}' && #{commandString}"
+      if atom.project.getPaths().length
+        commandString = "cd '#{atom.project.getPaths()[0]}' && #{commandString}"
       properties = { reversed: true, invalidate: 'never' }
 
       ranges = editor.getSelectedBufferRanges()
