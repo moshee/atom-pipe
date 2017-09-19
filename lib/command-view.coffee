@@ -1,4 +1,5 @@
 {View, TextEditorView} = require 'atom-space-pen-views'
+{CompositeDisposable} = require 'atom'
 
 
 module.exports =
@@ -25,12 +26,18 @@ class CommandView extends View
     historyPos = history.length
     cur = ''
 
-    @on 'core:cancel core:close', =>
-      callback(null)
-      @detach()
-    @on 'core:confirm', =>
-      callback(@commandLine.getText())
-      @detach()
+    @disposables = new CompositeDisposable
+    @disposables.add atom.commands.add 'atom-workspace',
+      'core:cancel': =>
+        callback(null)
+        @detach()
+      'core:close': =>
+        callback(null)
+        @detach()
+      'core:confirm': =>
+        callback(@commandLine.getText())
+        @detach()
+
     @commandLine.on 'keydown', (e) =>
       if history.length is 0 then return
 
@@ -54,3 +61,6 @@ class CommandView extends View
 
     atom.workspace.addBottomPanel(item: this)
     @commandLine.focus()
+
+  detached: ->
+    @disposables.dispose()
